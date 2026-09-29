@@ -39,6 +39,11 @@ class Carteira {
         ]);
     }
 
+    public function excluirTransacao(int $id): void {
+        $stmt = $this->db->prepare("DELETE FROM transacoes WHERE id = :id");
+        $stmt->execute([':id' => $id]);
+    }
+
     public function getSaldo(): float {
         $stmt = $this->db->query("
             SELECT 
@@ -55,12 +60,17 @@ class Carteira {
 
         $historico = [];
         foreach ($rows as $row) {
+            $id = (int)$row['id'];
+            $valor = (float)$row['valor'];
+            $descricao = $row['descricao'];
+            $data = $row['data_transacao'];
+
             if ($row['tipo'] === 'receita') {
-                $historico[] = new Receita((float)$row['valor'], $row['descricao'], $row['data_transacao']);
+                $historico[] = new Receita($valor, $descricao, $data, $id);
             } elseif ($row['tipo'] === 'despesa') {
-                $historico[] = new Despesa((float)$row['valor'], $row['descricao'], $row['data_transacao']);
+                $historico[] = new Despesa($valor, $descricao, $data, $id);
             } elseif ($row['tipo'] === 'diario') {
-                $historico[] = new Diario((float)$row['valor'], $row['descricao'], $row['data_transacao']);
+                $historico[] = new Diario($valor, $descricao, $data, $id);
             }
         }
 

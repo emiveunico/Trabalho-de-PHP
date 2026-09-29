@@ -10,20 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$tipo      = $_POST['tipo'] ?? '';
-$valor     = (float) ($_POST['valor'] ?? 0);
-$descricao = $_POST['descricao'] ?? '';
-$data      = $_POST['data'] ?? '';
+$tipo            = $_POST['tipo'] ?? '';
+$valor           = (float) ($_POST['valor'] ?? 0);
+$descricao       = $_POST['descricao'] ?? '';
+$categoria       = $_POST['categoria'] ?? 'Geral';
+$metodoPagamento = $_POST['metodo_pagamento'] ?? 'Dinheiro';
+$data            = $_POST['data'] ?? '';
 
 try {
     $carteira = new Carteira();
 
     if ($tipo === 'receita') {
-        $transacao = new Receita($valor, $descricao, $data);
+        $transacao = new Receita($valor, $descricao, $categoria, $metodoPagamento, $data);
     } elseif ($tipo === 'despesa') {
-        $transacao = new Despesa($valor, $descricao, $data);
+        $transacao = new Despesa($valor, $descricao, $categoria, $metodoPagamento, $data);
     } elseif ($tipo === 'diario') {
-        $transacao = new Diario($valor, $descricao, $data);
+        $transacao = new Diario($valor, $descricao, $categoria, $metodoPagamento, $data);
     } else {
         throw new Exception('Tipo de transação inválido.');
     }
